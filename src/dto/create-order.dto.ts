@@ -2,9 +2,9 @@ import { IsString, IsNotEmpty, IsOptional, IsNumber, IsArray, ValidateNested } f
 import { Type } from 'class-transformer';
 
 export class CreateOrderDto {
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
-    userId: number;
+    userId: string;
 
     @IsNumber()
     @IsOptional()
@@ -13,6 +13,20 @@ export class CreateOrderDto {
     @IsNumber()
     @IsNotEmpty()
     total: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    paymentMethod: number
+
+
+    @IsString()
+    @IsNotEmpty()
+    address: string
+
+
+    @IsString()
+    @IsNotEmpty()
+    cityId: string
 
     @IsArray()
     @ValidateNested({ each: true })
@@ -36,4 +50,9 @@ export class CreateOrderDetailDto {
     @IsNumber()
     @IsNotEmpty()
     productId: number;
+
+
+    @IsNumber()
+    @IsNotEmpty()
+    variantId: number;
 }

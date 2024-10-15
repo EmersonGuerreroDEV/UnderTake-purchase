@@ -7,7 +7,7 @@ export class OrderDetail {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('decimal', { precision: 10, scale: 2 })
+    @Column()
     price: number;
 
     @Column()
@@ -22,5 +22,10 @@ export class OrderDetail {
 
     @Column()
     productId: number;
+
+
+
+    @Column()
+    variantId: number;
 
 }
