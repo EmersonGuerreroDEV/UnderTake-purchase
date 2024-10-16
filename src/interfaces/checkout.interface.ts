@@ -1,10 +1,9 @@
-
-
-
 export interface Checkout {
     // openpay?: OpenpayResponse
     // binance?: BinancePaymentResponseInterface,
-    urlRedirect: string
+    urlRedirect: string;
+    order: number;
+    noRedirect: boolean
 }
 
 

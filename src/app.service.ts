@@ -66,13 +66,13 @@ export class OrderService {
           }
         )
       );
-      return { urlRedirect: openpayResponse.checkout_link };
+      return { urlRedirect: openpayResponse.checkout_link, order: savedOrder.id , noRedirect: false};
     } else {
 
       const binanceResponse: BinancePaymentResponseInterface = await lastValueFrom(this.checkoutService.send({ cmd: "binance-checkout" }, { id: savedOrder.id, amount: savedOrder.total }))
 
-      console.log(binanceResponse)
-      return { urlRedirect: binanceResponse.checkoutUrl }
+      
+      return { urlRedirect: binanceResponse.checkoutUrl, order: savedOrder.id, noRedirect: true }
     }
 
   }
@@ -86,10 +86,11 @@ export class OrderService {
       where: { id },
       relations: ['statusId', 'orderDetails'], // Incluir detalles de la orden
     });
-
+    
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
+    
 
     // Enriquecer la orden con detalles del producto
     const orderDetailsWithProducts = await Promise.all(
