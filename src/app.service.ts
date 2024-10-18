@@ -19,6 +19,7 @@ export class OrderService {
     @InjectRepository(OrderDetail) private orderDetailRepository: Repository<OrderDetail>,
     @InjectRepository(PaymentMethod) private paymentMethodRepository: Repository<PaymentMethod>,
     @Inject('PRODUCTS_SERVICE') private readonly productsClient: ClientProxy,
+    @Inject('AUTH_SERVICE') private authClient: ClientProxy,
   ) { }
 
   async create(createOrderDto: CreateOrderDto): Promise<Checkout> {
@@ -66,12 +67,12 @@ export class OrderService {
           }
         )
       );
-      return { urlRedirect: openpayResponse.checkout_link, order: savedOrder.id , noRedirect: false};
+      return { urlRedirect: openpayResponse.checkout_link, order: savedOrder.id, noRedirect: false };
     } else {
 
       const binanceResponse: BinancePaymentResponseInterface = await lastValueFrom(this.checkoutService.send({ cmd: "binance-checkout" }, { id: savedOrder.id, amount: savedOrder.total }))
 
-      
+
       return { urlRedirect: binanceResponse.checkoutUrl, order: savedOrder.id, noRedirect: true }
     }
 
@@ -86,11 +87,11 @@ export class OrderService {
       where: { id },
       relations: ['statusId', 'orderDetails'], // Incluir detalles de la orden
     });
-    
+
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
-    
+
 
     // Enriquecer la orden con detalles del producto
     const orderDetailsWithProducts = await Promise.all(
@@ -127,4 +128,19 @@ export class OrderService {
   async getPaymentMethods(): Promise<PaymentMethod[]> {
     return this.paymentMethodRepository.find();
   }
+
+  async findAllMe(token: string): Promise<Order[]> {
+
+    const result = await lastValueFrom(
+      this.authClient.send({ cmd: 'validate_token' }, { token }) // Enviar el token al microservicio de autenticación
+    );
+
+    console.log(result)
+    const orders = await this.orderRepository.find({
+      where: { userId: result.sub },
+      relations: ['statusId', 'orderDetails', 'paymentMethod'],
+    })
+    return orders
+  }
+
 }

@@ -22,6 +22,13 @@ export class OrderController {
     return this.orderService.findAll();
   }
 
+  @MessagePattern({ cmd: 'list_order' })
+  async findAllMe(token: any): Promise<Order[]> {
+
+    return this.orderService.findAllMe(token);
+  }
+
+
   @MessagePattern({ cmd: 'get-order' })
   async findOne(@Body() data): Promise<Order> {
     const id = parseInt(data.orderId)

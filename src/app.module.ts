@@ -29,7 +29,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           host: 'localhost', // Dirección del microservicio de productos
           port: 3002, // Puerto del microservicio de productos
         },
-      },]),
+      },
+
+      {
+        name: 'AUTH_SERVICE', // Nombre que usas para inyectar el servicio
+        transport: Transport.TCP, // Protocolo de transporte (puede ser Redis, NATS, etc.)
+        options: {
+          host: 'localhost', // Host del microservicio de autenticación
+          port: 3010, // Puerto del microservicio de autenticación
+        },
+      },
+    ]),
     ConfigModule.forRoot({
       load: [EnvConfiguration],
       isGlobal: true,
