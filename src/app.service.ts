@@ -78,7 +78,26 @@ export class OrderService {
 
   }
   async findAll(): Promise<Order[]> {
-    return this.orderRepository.find({ relations: ['statusId'] });
+
+
+    const orders = await this.orderRepository.find({ relations: ['statusId', 'orderDetails', 'paymentMethod'] });
+
+    const orderDetailsWithUser = await Promise.all(
+      orders.map(async (order) => {
+        // Hacer la petición para obtener la información del usuario
+        const user = await lastValueFrom(
+          this.authClient.send({ cmd: 'detail_admin_user' }, { user: { id: order.userId } })
+        );
+
+        // Combinar la información del pedido con la del usuario
+        return {
+          ...order,
+          user, // Aquí agregas la información del usuario
+        };
+      })
+    );
+
+    return orderDetailsWithUser;
   }
 
   async findOne(id: number): Promise<Order> {
