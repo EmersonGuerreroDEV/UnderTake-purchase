@@ -55,7 +55,7 @@ export class OrderService {
             amount: createOrderDto.total,
             currency: "COP",
             description: "Compra de productos",
-            redirect_url: `http://localhost:3000/purchases/${savedOrder.id}`,
+            redirect_url: `${process.env.CLIENT_URL}/purchases/${savedOrder.id}`,
             order_id: savedOrder.id,
             send_email: true,
             customer: {
